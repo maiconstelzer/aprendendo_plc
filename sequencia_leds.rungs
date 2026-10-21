@@ -1,0 +1,133 @@
+version: 5
+origin: studio
+aoi:
+  name: Timer_ST
+  description: Timer On Delay instruction
+  parameters:
+    - name: EnableIn
+      dataType: BOOL
+      usage: input
+      defaultValue: 1
+      description: Enable Input - System Defined Parameter
+    - name: EnableOut
+      dataType: BOOL
+      usage: output
+      description: Enable Output - System Defined Parameter
+    - name: BOTAO1
+      usage: input
+      dataType: BOOL
+    - name: LED1
+      usage: output
+      dataType: BOOL
+    - name: LED2
+      usage: output
+      dataType: BOOL
+    - name: LED3
+      usage: output
+      dataType: BOOL
+    - name: BOTAO2
+      usage: input
+      dataType: BOOL
+    - name: BOTAO3
+      usage: input
+      dataType: BOOL
+    - name: BOTAO4
+      usage: input
+      dataType: BOOL
+  localTags:
+    - name: Tmr_Generator
+      description: Timer structure for the TONR instruction
+      dataType: FBD_TIMER
+      defaultValue:
+        EnableIn: 1
+    - name: DELAY
+      dataType: INT
+      defaultValue: 2000
+    - name: MEM1
+      dataType: BOOL
+    - name: MEM2
+      dataType: BOOL
+    - name: REGRA_LED1
+      dataType: BOOL
+    - name: REGRA_LED2
+      dataType: BOOL
+    - name: REGRA_LED3
+      dataType: BOOL
+  routines:
+    Logic:
+      type: st
+      content: |
+        Tmr_Generator.PRE := DELAY*3;
+        Tmr_Generator.TimerEnable := 1;
+        TONR(Tmr_Generator);
+        Tmr_Generator.Reset := Tmr_Generator.DN;
+
+        LED1 := REGRA_LED1;  
+        LED2 := REGRA_LED2; 
+        LED3 := REGRA_LED3; 
+
+        IF BOTAO1 AND NOT BOTAO2 THEN
+          MEM1 := 1;
+          MEM2 := 0;
+          Tmr_Generator.Reset := 1;
+        END_IF;
+
+        IF BOTAO2 AND NOT BOTAO1 THEN
+          MEM2 := 1;
+          MEM1 := 0;
+          Tmr_Generator.Reset := 1;
+        END_IF;
+
+        IF MEM1 THEN
+          REGRA_LED1 := Tmr_Generator.ACC > 0 AND Tmr_Generator.ACC < DELAY*1;
+          REGRA_LED2 := Tmr_Generator.ACC > DELAY*1 AND Tmr_Generator.ACC < DELAY*2;
+          REGRA_LED3 := Tmr_Generator.ACC > DELAY*2 AND Tmr_Generator.ACC < DELAY*3;
+        END_IF;
+
+        IF MEM2 THEN
+          REGRA_LED1 := Tmr_Generator.ACC > DELAY*2 AND Tmr_Generator.ACC < DELAY*3;
+          REGRA_LED2 := Tmr_Generator.ACC > DELAY*1 AND Tmr_Generator.ACC < DELAY*2;
+          REGRA_LED3 := Tmr_Generator.ACC > 0 AND Tmr_Generator.ACC < DELAY*1;
+        END_IF;
+
+        IF BOTAO4 THEN
+          MEM1 := 0;
+          MEM2 := 0;
+        END_IF;
+tests: |
+  - name: output is 0 on first scan
+    steps:
+      - advance:
+          scans: 1
+        expect:
+          Output: 0
+  - name: output asserts after 500ms
+    steps:
+      - advance:
+          time: "600ms"
+        expect:
+          Output: 1
+  - name: output tracks accumulator threshold across scans
+    steps:
+      - advance:
+          scans: 5
+        expect:
+          Output: 0
+      - advance:
+          scans: 1
+        expect:
+          Output: 1
+  - name: timer resets after preset and output deasserts
+    steps:
+      - advance:
+          time: "600ms"
+        expect:
+          Output: 1
+      - advance:
+          time: "1.5s"
+        expect:
+          Output: 1
+      - advance:
+          scans: 1
+        expect:
+          Output: 0
