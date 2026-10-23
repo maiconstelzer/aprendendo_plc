@@ -1,66 +1,28 @@
-IF "I0.4" THEN
+"timer_ciclo".TONR(
+    IN := "M0.0",
+    PT := ("DELAY" * 8),
+    Q => "M0.1",
+    R:= NOT "M0.0");
+
+IF "I0.4" AND "M0.0" THEN
+    "M0.0" := 0;
+END_IF;
+
+IF "I0.4" AND NOT "M0.0" THEN
     "M0.0" := 1;
 END_IF;
 
-IF "I0.7" THEN
+IF "M0.1" THEN
     "M0.0" := 0;
-    "M0.1" := 0;
 END_IF;
 
-"timer_ciclo".TONR(IN := "M0.0",
-                   PT := "DELAY"*8,
-                   R:= "M0.1");
+"Q0.0" := "timer_ciclo".ET >= T#0MS AND "timer_ciclo".ET <= "DELAY";
+"Q0.1" := "timer_ciclo".ET >= "DELAY" AND "timer_ciclo".ET <= ("DELAY" * 2);
+"Q0.2" := "timer_ciclo".ET >= ("DELAY" * 2) AND "timer_ciclo".ET <= ("DELAY" * 3);
+"Q0.3" := "timer_ciclo".ET >= ("DELAY" * 3) AND "timer_ciclo".ET <= ("DELAY" * 4);
+"Q0.4" := "timer_ciclo".ET >= ("DELAY" * 4) AND "timer_ciclo".ET <= ("DELAY" * 5);
+"Q0.5" := "timer_ciclo".ET >= ("DELAY" * 5) AND "timer_ciclo".ET <= ("DELAY" * 6);
+"Q0.6" := "timer_ciclo".ET >= ("DELAY" * 6) AND "timer_ciclo".ET <= ("DELAY" * 7);
+"Q0.7" := "timer_ciclo".ET >= ("DELAY" * 7) AND "timer_ciclo".ET <= ("DELAY" * 8);
 
-IF "timer_ciclo".ET > 0 AND "timer_ciclo".ET < "DELAY" THEN
-    "timer".TP(IN := "Q0.0" = 0,
-               PT := "DELAY",
-               Q => "Q0.0");
-ELSE
-    "Q0.0" := 0;
-END_IF;
 
-IF "timer_ciclo".ET > "DELAY" AND"timer_ciclo".ET <"DELAY"*2 THEN
-    "timer".TP(IN := "Q0.1" = 0,
-               PT := "DELAY",
-               Q => "Q0.1");
-END_IF;
-
-IF "timer_ciclo".ET > "DELAY" * 2 AND "timer_ciclo".ET < "DELAY" * 3 THEN
-    "timer".TP(IN := "Q0.2" = 0,
-               PT := "DELAY",
-               Q => "Q0.2");
-END_IF;
-
-IF "timer_ciclo".ET > "DELAY" * 3 AND "timer_ciclo".ET < "DELAY" * 4 THEN
-    "timer".TP(IN := "Q0.3" = 0,
-               PT := "DELAY",
-               Q => "Q0.3");
-END_IF;
-
-IF "timer_ciclo".ET > "DELAY" * 4 AND "timer_ciclo".ET < "DELAY" * 5 THEN
-    "timer".TP(IN := "Q0.4" = 0,
-               PT := "DELAY",
-               Q => "Q0.4");
-END_IF;
-
-IF "timer_ciclo".ET > "DELAY" * 5 AND "timer_ciclo".ET < "DELAY" * 6 THEN
-    "timer".TP(IN := "Q0.5" = 0,
-               PT := "DELAY",
-               Q => "Q0.5");
-END_IF;
-
-IF "timer_ciclo".ET > "DELAY" * 6 AND "timer_ciclo".ET < "DELAY" * 7 THEN
-    "timer".TP(IN := "Q0.6" = 0,
-               PT := "DELAY",
-               Q => "Q0.6");
-END_IF;
-
-IF "timer_ciclo".ET > "DELAY" * 7 AND "timer_ciclo".ET < "DELAY" * 8 THEN
-    "timer".TP(IN := "Q0.7" = 0,
-               PT := "DELAY",
-               Q => "Q0.7");
-END_IF;
-
-IF "timer_ciclo".ET > "DELAY" * 8 THEN
-    "M0.1" := 1;
-END_IF;
