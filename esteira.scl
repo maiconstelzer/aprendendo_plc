@@ -18,7 +18,6 @@ IF "FLUXO_D" THEN
     "EmOperacao" := 0;
     "CilindroA" := 0;
     "CilindroB" := 0;
-    "Sonoro" := 0;
     "FLUXO_A" := 0;
 END_IF;
 
@@ -27,24 +26,32 @@ IF "FLUXO_G" OR "FLUXO_M" THEN
 END_IF;
 
 IF "FLUXO_G" AND "FLUXO_A" AND NOT "FLUXO_M" THEN
-    "CilindroA" := 1;
     IF "SensorAAvanc" THEN
         "CilindroA" := 0;
     END_IF;
     
+    IF "SensorARec" AND "CilindroA" THEN
+        "CilindroA" := 1;
+    END_IF;
+    
     IF "SensorARec" AND NOT "CilindroA" THEN
         "FLUXO_G" := 0;
+        "Sonoro" := 0;
     END_IF;
 END_IF;
 
 IF "FLUXO_M" AND "FLUXO_A" AND NOT "FLUXO_G" THEN
-    "CilindroB" := 1;
-    IF "SensorAAvanc" THEN
+    IF "SensorAAvanc" AND "CilindroB" THEN
         "CilindroB" := 0;
+    END_IF;
+    
+    IF "SensorBRec" AND "CilindroB" THEN
+        "CilindroB" := 1;
     END_IF;
     
     IF "SensorARec" AND NOT "CilindroB" THEN
         "FLUXO_M" := 0;
+        "Sonoro" := 0;
     END_IF;
 END_IF;
 
@@ -62,3 +69,32 @@ IF "FLUXO_A" THEN
         "FLUXO_G" := 0;
     END_IF;
 END_IF;
+
+
+IF "SensorQtdG" THEN
+    "QTD_G" += 1;
+END_IF;
+
+IF "SensorQtdM" THEN
+    "QTD_M" += 1;
+END_IF;
+
+IF "QTD_G" = 5 THEN
+    "FLUXO_D" := 1;
+    "SinalizadorG" := 1;
+    "QTD_G" := 0;
+ELSE
+    "SinalizadorG" := 0;
+END_IF;
+
+IF "QTD_M" = 5 THEN
+    "FLUXO_D" := 1;
+    "SinalizadorM" := 1;
+    "QTD_M" := 0;
+ELSE
+    "SinalizadorM" := 0;
+END_IF;
+
+"timer_sonoro".TON(IN := "QTD_G" = 5 OR "QTD_M" = 5,
+                   PT := T#5000MS,
+                   Q => "Sonoro");
