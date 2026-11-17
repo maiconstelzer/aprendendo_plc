@@ -1,0 +1,64 @@
+IF NOT "Pressostato"
+    OR NOT "ChaveEsteira"
+    OR "SensorQtdG"
+    OR "SensorQtdM"
+    OR "SensorQtdP"
+THEN
+    "FLUXO_D" := 1;
+    "FLUXO_A" := 0;
+END_IF;
+
+IF "ChaveEsteira" AND "FLUXO_D" THEN
+    "FLUXO_A" := 1;
+    "FLUXO_D" := 0;
+END_IF;
+
+IF "FLUXO_D" THEN
+    "Motor" := 0;
+    "EmOperacao" := 0;
+    "CilindroA" := 0;
+    "CilindroB" := 0;
+    "Sonoro" := 0;
+    "FLUXO_A" := 0;
+END_IF;
+
+IF "FLUXO_G" OR "FLUXO_M" THEN
+    "Motor" := 0;
+END_IF;
+
+IF "FLUXO_G" AND "FLUXO_A" AND NOT "FLUXO_M" THEN
+    "CilindroA" := 1;
+    IF "SensorAAvanc" THEN
+        "CilindroA" := 0;
+    END_IF;
+    
+    IF "SensorARec" AND NOT "CilindroA" THEN
+        "FLUXO_G" := 0;
+    END_IF;
+END_IF;
+
+IF "FLUXO_M" AND "FLUXO_A" AND NOT "FLUXO_G" THEN
+    "CilindroB" := 1;
+    IF "SensorAAvanc" THEN
+        "CilindroB" := 0;
+    END_IF;
+    
+    IF "SensorARec" AND NOT "CilindroB" THEN
+        "FLUXO_M" := 0;
+    END_IF;
+END_IF;
+
+IF "FLUXO_A" THEN
+    "EmOperacao" := 1;
+    "Sonoro" := 1;
+    "Motor" := 1;
+    IF "SensorG" THEN
+        "FLUXO_G" := 1;
+        "FLUXO_M" := 0;
+    END_IF;
+    
+    IF "SensorM" THEN
+        "FLUXO_M" := 1;
+        "FLUXO_G" := 0;
+    END_IF;
+END_IF;
