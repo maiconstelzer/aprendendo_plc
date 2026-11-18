@@ -71,7 +71,16 @@ END_IF;
                PT := T#5S,
                Q => "Sonoro");
 
+    Na árvore do projeto, abra Devices & networks e dê duplo clique na CPU.
+    Na Device view, selecione a CPU e abra Properties.
+    Vá em General → System and clock memory.
+    Marque Enable the use of clock memory byte.
+    Informe um byte de memória livre, por exemplo MB10, e compile/baixe a configuração para a CPU. O byte escolhido fica reservado para os bits de clock; não use esse byte para outras variáveis.
+    siemens.cloud
+    1
 
-"SinalizadorG" := "FLUXO_QTD_G";
-"SinalizadorM" := "FLUXO_QTD_M";
-"SinalizadorP" := "FLUXO_QTD_P";
+Para alternar a saída a cada 1 segundo, use o bit 7 desse byte, que tem período de 2 segundos: fica ligado por 1 s e desligado por 1 s. Se configurou MB10, no SCL fica, por exemplo:
+
+"SinalizadorG" := "FLUXO_QTD_G" AND M10.7;
+"SinalizadorM" := "FLUXO_QTD_M" AND M10.7;
+"SinalizadorP" := "FLUXO_QTD_P" AND M10.7;
