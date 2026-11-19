@@ -51,36 +51,26 @@ IF "FLUXO_E" THEN
     END_IF;
 END_IF;
 
-"CONTADOR_G".CTU(CU:="SensorQtdG",
-                 R:="BtnResetG",
-                 PV:=5,
-                 Q=>"FLUXO_QTD_G");
+"CONTADOR_G".CTU(CU := "SensorQtdG",
+                 R := "BtnResetG",
+                 PV := 5,
+                 Q => "FLUXO_QTD_G");
 
-"CONTADOR_M".CTU(CU:="SensorQtdM",
-                 R:="BtnResetM",
-                 PV:=5,
-                 Q=>"FLUXO_QTD_M");
+"CONTADOR_M".CTU(CU := "SensorQtdM",
+                 R := "BtnResetM",
+                 PV := 5,
+                 Q => "FLUXO_QTD_M");
 
-"CONTADOR_P".CTU(CU:="SensorQtdP",
-                 R:="BtnResetP",
-                 PV:=5,
-                 Q=>"FLUXO_QTD_P");
+"CONTADOR_P".CTU(CU := "SensorQtdP",
+                 R := "BtnResetP",
+                 PV := 5,
+                 Q => "FLUXO_QTD_P");
 
 
 "SONORO_GM".TP(IN := "FLUXO_QTD_G" OR "FLUXO_QTD_M" OR "FLUXO_QTD_P",
                PT := T#5S,
                Q => "Sonoro");
 
-    Na árvore do projeto, abra Devices & networks e dê duplo clique na CPU.
-    Na Device view, selecione a CPU e abra Properties.
-    Vá em General → System and clock memory.
-    Marque Enable the use of clock memory byte.
-    Informe um byte de memória livre, por exemplo MB10, e compile/baixe a configuração para a CPU. O byte escolhido fica reservado para os bits de clock; não use esse byte para outras variáveis.
-    siemens.cloud
-    1
-
-Para alternar a saída a cada 1 segundo, use o bit 7 desse byte, que tem período de 2 segundos: fica ligado por 1 s e desligado por 1 s. Se configurou MB10, no SCL fica, por exemplo:
-
-"SinalizadorG" := "FLUXO_QTD_G" AND M10.7;
-"SinalizadorM" := "FLUXO_QTD_M" AND M10.7;
-"SinalizadorP" := "FLUXO_QTD_P" AND M10.7;
+"SinalizadorG" := "FLUXO_QTD_G" AND "Clock_0.5Hz";
+"SinalizadorM" := "FLUXO_QTD_M" AND "Clock_0.5Hz";
+"SinalizadorP" := "FLUXO_QTD_P" AND "Clock_0.5Hz";
